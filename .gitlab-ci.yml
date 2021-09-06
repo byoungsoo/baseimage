@@ -1,4 +1,4 @@
-image: 718652001716.dkr.ecr.ap-northeast-2.amazonaws.com/common/docker:stable
+image: 718652001716.dkr.ecr.ap-northeast-2.amazonaws.com/common:docker-stable
 
 variables:
   ECR_BASE_URL: 718652001716.dkr.ecr.ap-northeast-2.amazonaws.com
@@ -72,7 +72,7 @@ copy-alpine:
   variables:
     DOCKER_BASE_IMAGE_NAME: alpine
     DOCKER_BASE_IMAGE_TAG: 3.13.5
-    DOCKER_ECR_IMAGE_NAME: common/dockerhub
+    DOCKER_ECR_IMAGE_NAME: common
     DOCKER_ECR_IMAGE_TAG: alpine-3.13.5
   before_script:
     - !reference [.template-prepare-ecr, script]
@@ -198,7 +198,7 @@ gradle-docker-build:
     DOCKER_ECR_IMAGE_NAME: common/gradle
     DOCKER_ECR_IMAGE_TAG: 6.5-jdk8
     DOCKER_FILE_NAME: Dockerfile-gradle
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=alpine-3.13.5
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=alpine-3.13.5
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
@@ -214,7 +214,7 @@ docker-docker-build:
     DOCKER_ECR_IMAGE_NAME: common/docker
     DOCKER_ECR_IMAGE_TAG: stable
     DOCKER_FILE_NAME: Dockerfile-docker
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=docker-stable
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=docker-stable
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
@@ -227,25 +227,10 @@ helm-docker-build:
   stage: package
   when: manual
   variables:
-    DOCKER_ECR_IMAGE_NAME: common/helm-deploy
-    DOCKER_ECR_IMAGE_TAG: latest
+    DOCKER_ECR_IMAGE_NAME: common
+    DOCKER_ECR_IMAGE_TAG: helm-deploy
     DOCKER_FILE_NAME: Dockerfile-helm
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=alpine-3.13.5
-  before_script:
-    - !reference [.template-prepare-ecr, script]
-  script:
-    - !reference [.template-docker-build, script]
-  only:
-    - master
-  
-tomcat-docker-build:
-  stage: package
-  when: manual
-  variables:
-    DOCKER_ECR_IMAGE_NAME: common/tomcat
-    DOCKER_ECR_IMAGE_TAG: 8.5-jdk8-openjdk
-    DOCKER_FILE_NAME: Dockerfile-tomcat
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=tomcat8.5-jdk8-openjdk
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=alpine-3.13.5
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
@@ -260,7 +245,22 @@ tomcat-ubuntu-docker-build:
     DOCKER_ECR_IMAGE_NAME: common/tomcat
     DOCKER_ECR_IMAGE_TAG: 8.5-jdk8-ubuntu
     DOCKER_FILE_NAME: Dockerfile-tomcat-ubuntu
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=ubuntu-21.10
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=ubuntu-21.10
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-docker-build, script]
+  only:
+    - master
+
+maven-docker-build:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_ECR_IMAGE_NAME: common
+    DOCKER_ECR_IMAGE_TAG: maven-3.8.1
+    DOCKER_FILE_NAME: Dockerfile-maven
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=maven --build-arg BASE_IMAGE_TAG=3.8.1-openjdk-11
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
