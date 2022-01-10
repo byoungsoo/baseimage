@@ -7,7 +7,7 @@
     <server>
       <id>maven-public</id>
       <username>byoungsoo</username>
-      <password>test123</password>
+      <password></password>
     </server>
   </servers>
 
