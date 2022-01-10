@@ -7,7 +7,7 @@
     <server>
       <id>maven-public</id>
       <username>byoungsoo</username>
-      <password>qudtngogo1!</password>
+      <password>test123</password>
     </server>
   </servers>
 
@@ -15,7 +15,7 @@
     <mirror>
       <id>maven-public</id>
       <name>maven-public</name>
-      <url>http://smp-dev-alb-common-956797040.ap-northeast-2.elb.amazonaws.com:8090/repository/maven-public/</url>
+      <url>http://example.com:8090/repository/maven-public/</url>
       <mirrorOf>*</mirrorOf>
     </mirror>
   </mirrors>
