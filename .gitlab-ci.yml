@@ -78,7 +78,7 @@ copy-alpine:
   script:
     - !reference [.template-copy-docker-hub-to-ecr, script]
   only:
-    - master
+    - main
 
 copy-ubuntu:
   stage: package
@@ -93,7 +93,7 @@ copy-ubuntu:
   script:
     - !reference [.template-copy-docker-hub-to-ecr, script]
   only:
-    - master
+    - main
 
 copy-docker:
   stage: package
@@ -108,7 +108,7 @@ copy-docker:
   script:
     - !reference [.template-copy-docker-hub-to-ecr, script]
   only:
-    - master
+    - main
 
 copy-tomcat-8.5:
   stage: package
@@ -123,7 +123,7 @@ copy-tomcat-8.5:
   script:
     - !reference [.template-copy-docker-hub-to-ecr, script]
   only:
-    - master
+    - main
 
 
 copy-gitlab-ee:
@@ -139,7 +139,7 @@ copy-gitlab-ee:
   script:
     - !reference [.template-copy-docker-hub-to-ecr, script]
   only:
-    - master
+    - main
 
 
 copy-fluentd:
@@ -155,7 +155,7 @@ copy-fluentd:
   script:
     - !reference [.template-copy-docker-hub-to-ecr, script]
   only:
-    - master
+    - main
 
 
 copy-metricsserver:
@@ -171,7 +171,7 @@ copy-metricsserver:
   script:
     - !reference [.template-copy-docker-hub-to-ecr, script]
   only:
-    - master
+    - main
   
 copy-ingress-nginx-controller:
   stage: package
@@ -186,7 +186,7 @@ copy-ingress-nginx-controller:
   script:
     - !reference [.template-copy-docker-hub-to-ecr, script]
   only:
-    - master
+    - main
 
 
 
@@ -203,7 +203,7 @@ gradle-docker-build:
   script:
     - !reference [.template-docker-build, script]
   only:
-    - master
+    - main
   
 
 docker-docker-build:
@@ -211,15 +211,15 @@ docker-docker-build:
   when: manual
   variables:
     DOCKER_ECR_IMAGE_NAME: common/docker
-    DOCKER_ECR_IMAGE_TAG: stable
+    DOCKER_ECR_IMAGE_TAG: latest
     DOCKER_FILE_NAME: Dockerfile-docker
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=docker-stable
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=docker:latest
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
     - !reference [.template-docker-build, script]
   only:
-    - master
+    - main
 
 
 helm-docker-build:
@@ -235,7 +235,7 @@ helm-docker-build:
   script:
     - !reference [.template-docker-build, script]
   only:
-    - master
+    - main
   
 tomcat-ubuntu-docker-build:
   stage: package
@@ -250,7 +250,7 @@ tomcat-ubuntu-docker-build:
   script:
     - !reference [.template-docker-build, script]
   only:
-    - master
+    - main
 
 maven-docker-build:
   stage: package
@@ -265,4 +265,4 @@ maven-docker-build:
   script:
     - !reference [.template-docker-build, script]
   only:
-    - master
+    - main
