@@ -1,0 +1,56 @@
+ARG BASE_IMAGE_NAME
+ARG BASE_IMAGE_TAG
+FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+
+ENV TOMCAT_MAJOR=8 \
+    TOMCAT_VERSION=8.5.66 \
+    CATALINA_HOME=/usr/local/tomcat \
+    LANG=C.UTF-8 \
+    JAVA_HOME=/usr/lib/jvm/jdk1.8.0_231 \
+    TOMCAT_NATIVE_LIBDIR=/usr/local/tomcat/native-jni-lib \
+    LD_LIBRARY_PATH=/usr/local/tomcat/native-jni-lib \
+    PATH=/usr/lib/jvm/jdk1.8.0_231:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/tomcat/bin
+
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN mkdir -p /jennifer
+COPY agent.java /jennifer/agent.java
+
+## init
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends curl wget ca-certificates unzip openjdk-8-jdk gcc libapr1 libapr1-dev libssl-dev make
+
+ENV TOMCAT_NATIVE_LIBDIR=/usr/local/tomcat/native-jni-lib
+ENV LD_LIBRARY_PATH=/usr/local/tomcat/native-jni-lib
+
+## install tomcat
+RUN curl -jkSL -o /tmp/apache-tomcat.tar.gz http://archive.apache.org/dist/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz && \
+    gzip -d /tmp/apache-tomcat.tar.gz && \
+    tar -C /usr/local -xf /tmp/apache-tomcat.tar && \
+    mv /usr/local/apache-tomcat-$TOMCAT_VERSION /usr/local/tomcat && \
+    tar -C /usr/local/tomcat -xvzf /usr/local/tomcat/bin/tomcat-native.tar.gz && \
+    mkdir -p /usr/local/tomcat/native-jni-lib
+
+#RUN cd /usr/local/tomcat/tomcat-native-1.2.28-src/native \
+#    && ./configure --prefix=$CATALINA_HOME \
+
+WORKDIR /usr/local/tomcat/tomcat-native-1.2.28-src/native
+RUN ./configure --prefix=$CATALINA_HOME \
+    --with-apr=/usr/bin/apr-1-config \
+    --libdir=/usr/local/tomcat/native-jni-lib \
+    --with-java-home=$JAVA_HOME \
+    --with-ssl=yes
+RUN make
+RUN make install
+
+## cleanup
+RUN rm -rf /tmp/* /var/cache/apk/* /usr/local/tomcat/tomcat-native-1.2.28-src 
+
+## Tomcat DB Password Encrypt Decrypt
+COPY tomcatPasswordEncrypt/SecureTomcatJDBC.jar /usr/local/tomcat/lib
+
+WORKDIR /usr/local/tomcat
+
+EXPOSE 8080
+
+CMD ["/usr/local/tomcat/bin/catalina.sh","run"]

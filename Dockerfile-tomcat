@@ -1,0 +1,9 @@
+ARG BASE_IMAGE_NAME
+ARG BASE_IMAGE_TAG
+FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# RUN mkdir -p /jennifer
+# COPY agent.java /jennifer/agent.java

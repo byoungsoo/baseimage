@@ -1,0 +1,268 @@
+image: 202949997891.dkr.ecr.ap-northeast-2.amazonaws.com/common:docker-latest
+
+variables:
+  ECR_BASE_URL: 202949997891.dkr.ecr.ap-northeast-2.amazonaws.com
+  AWS_REGION: "ap-northeast-2"
+ 
+stages:
+  - package
+
+.template-prepare-ecr:
+  script:
+    # AWS ECR Login
+    - $(aws ecr get-login --no-include-email --region ${AWS_REGION})
+    
+    - export IS_REPO=`aws ecr describe-repositories --region ${AWS_REGION} --query "repositories[].repositoryName" | grep ${DOCKER_ECR_IMAGE_NAME} | wc -l`
+    - >
+     if [ "$IS_REPO" == "0" ]; then
+       aws ecr create-repository --repository-name ${DOCKER_ECR_IMAGE_NAME} --region ${AWS_REGION} --image-scanning-configuration scanOnPush=true
+     fi
+
+.template-docker-build:
+  script:    
+    ### Check Latest Image
+    - export IS_LATEST=`aws ecr describe-images --region ${AWS_REGION} --repository-name ${DOCKER_ECR_IMAGE_NAME} --query imageDetails[].imageTags | grep ${DOCKER_ECR_IMAGE_TAG}-latest | wc -l`
+    ### Docker Backup
+    - >
+     if [ "$IS_LATEST" == "1" ]; then
+       echo "Image Backup";
+       docker pull ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}-latest;
+       docker tag ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}-latest ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}-backup;
+       docker push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}-backup;
+     fi
+
+    ### Docker Build & Push
+    - docker build . -t ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG} -f ${DOCKER_FILE_NAME} ${DOCKER_BUILD_ARGS}
+    - docker push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}
+    
+    - docker tag ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG} ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}-latest
+    - docker push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}-latest
+
+.template-copy-docker-hub-to-ecr:
+  script:
+    ### Docker Build & Push
+    ## - docker build . -t ${_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} --build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg APPLICATION_NAME=${APPLICATION_NAME}
+    - docker pull ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
+    - docker tag ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG} ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}
+
+    - docker push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}
+
+    - docker rmi -f ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
+    - docker rmi -f ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}
+
+
+.template-copy-oracle-registry-to-ecr:
+  script:
+    ### Docker Build & Push
+    ## - docker build . -t ${_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} --build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg APPLICATION_NAME=${APPLICATION_NAME}
+    - docker login container-registry.oracle.com -u givesussmile@gtplus.co.kr -p Wlxlvmffjtm#700!
+    - docker pull ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
+    - docker tag ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG} ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}
+
+    - docker push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}
+
+    - docker rmi -f ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
+    - docker rmi -f ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_NAME}:${DOCKER_ECR_IMAGE_TAG}
+
+
+copy-alpine:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: alpine
+    DOCKER_BASE_IMAGE_TAG: 3.13.5
+    DOCKER_ECR_IMAGE_NAME: common
+    DOCKER_ECR_IMAGE_TAG: alpine-3.13.5
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - master
+
+copy-ubuntu:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: ubuntu
+    DOCKER_BASE_IMAGE_TAG: "21.10"
+    DOCKER_ECR_IMAGE_NAME: common/dockerhub
+    DOCKER_ECR_IMAGE_TAG: ubuntu-21.10
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - master
+
+copy-docker:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: docker
+    DOCKER_BASE_IMAGE_TAG: latest
+    DOCKER_ECR_IMAGE_NAME: common/dockerhub
+    DOCKER_ECR_IMAGE_TAG: docker-latest
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - master
+
+copy-tomcat-8.5:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: tomcat
+    DOCKER_BASE_IMAGE_TAG: 9.0.68-jdk11-corretto-al2
+    DOCKER_ECR_IMAGE_NAME: common/dockerhub
+    DOCKER_ECR_IMAGE_TAG: tomcat8.5-jdk8-openjdk
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - master
+
+
+copy-gitlab-ee:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: gitlab/gitlab-ee
+    DOCKER_BASE_IMAGE_TAG: 13.10.2-ee.0
+    DOCKER_ECR_IMAGE_NAME: common/dockerhub
+    DOCKER_ECR_IMAGE_TAG: gitlab-ee-13.10.2-ee.0
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - master
+
+
+copy-fluentd:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: fluent/fluentd-kubernetes-daemonset 
+    DOCKER_BASE_IMAGE_TAG: v1.7.3-debian-cloudwatch-1.0
+    DOCKER_ECR_IMAGE_NAME: common/dockerhub
+    DOCKER_ECR_IMAGE_TAG: fluentd-kubernetes-daemonset-v1.7.3-debian-cloudwatch-1.0
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - master
+
+
+copy-metricsserver:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: k8s.gcr.io/metrics-server/metrics-server
+    DOCKER_BASE_IMAGE_TAG: v0.5.0
+    DOCKER_ECR_IMAGE_NAME: common/gcr
+    DOCKER_ECR_IMAGE_TAG: metrics-server-v0.5.0
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - master
+  
+copy-ingress-nginx-controller:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: k8s.gcr.io/ingress-nginx/controller
+    DOCKER_BASE_IMAGE_TAG: v0.46.0
+    DOCKER_ECR_IMAGE_NAME: common/gcr
+    DOCKER_ECR_IMAGE_TAG: ingress-nginx-controller-v0.46.0
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - master
+
+
+
+gradle-docker-build:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_ECR_IMAGE_NAME: common/gradle
+    DOCKER_ECR_IMAGE_TAG: 6.5-jdk8
+    DOCKER_FILE_NAME: Dockerfile-gradle
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=alpine-3.13.5
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-docker-build, script]
+  only:
+    - master
+  
+
+docker-docker-build:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_ECR_IMAGE_NAME: common/docker
+    DOCKER_ECR_IMAGE_TAG: stable
+    DOCKER_FILE_NAME: Dockerfile-docker
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=docker-stable
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-docker-build, script]
+  only:
+    - master
+
+
+helm-docker-build:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_ECR_IMAGE_NAME: common
+    DOCKER_ECR_IMAGE_TAG: helm-deploy
+    DOCKER_FILE_NAME: Dockerfile-helm
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=alpine-3.13.5
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-docker-build, script]
+  only:
+    - master
+  
+tomcat-ubuntu-docker-build:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_ECR_IMAGE_NAME: common/tomcat
+    DOCKER_ECR_IMAGE_TAG: 8.5-jdk8-ubuntu
+    DOCKER_FILE_NAME: Dockerfile-tomcat-ubuntu
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common --build-arg BASE_IMAGE_TAG=ubuntu-21.10
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-docker-build, script]
+  only:
+    - master
+
+maven-docker-build:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_ECR_IMAGE_NAME: common
+    DOCKER_ECR_IMAGE_TAG: maven-3.8.1
+    DOCKER_FILE_NAME: Dockerfile-maven
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=maven --build-arg BASE_IMAGE_TAG=3.8.1-openjdk-11
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-docker-build, script]
+  only:
+    - master
