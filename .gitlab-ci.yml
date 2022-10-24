@@ -1,4 +1,4 @@
-image: 202949997891.dkr.ecr.ap-northeast-2.amazonaws.com/common/dockerhub:docker-latest
+image: 202949997891.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:docker-latest
 
 variables:
   ECR_BASE_URL: 202949997891.dkr.ecr.ap-northeast-2.amazonaws.com
@@ -87,10 +87,10 @@ docker-docker-build:
   stage: package
   when: manual
   variables:
-    DOCKER_ECR_IMAGE_NAME: common/build
-    DOCKER_ECR_IMAGE_TAG: docker-latest
     DOCKER_FILE_NAME: Dockerfile-docker
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=docker-latest
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/build --build-arg BASE_IMAGE_TAG=docker-latest
+    DOCKER_ECR_IMAGE_NAME: common/build
+    DOCKER_ECR_IMAGE_TAG: docker
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
