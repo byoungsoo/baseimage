@@ -87,7 +87,7 @@ docker-docker-build:
   stage: package
   when: manual
   variables:
-    DOCKER_ECR_IMAGE_NAME: common/dockerhub
+    DOCKER_ECR_IMAGE_NAME: common/build
     DOCKER_ECR_IMAGE_TAG: docker-latest
     DOCKER_FILE_NAME: Dockerfile-docker
     DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=docker-latest
@@ -97,6 +97,7 @@ docker-docker-build:
     - !reference [.template-docker-build, script]
   only:
     - main
+
 
 copy-fluentd:
   stage: package
