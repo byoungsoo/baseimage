@@ -71,7 +71,7 @@ copy-tomcat9-jdk11:
   when: manual
   variables:
     DOCKER_BASE_IMAGE_NAME: tomcat
-    DOCKER_BASE_IMAGE_TAG: 9.0.68-jdk11-corretto-al2
+    DOCKER_BASE_IMAGE_TAG: 9.0.76-jdk11-corretto-al2
     DOCKER_ECR_IMAGE_NAME: common/dockerhub
     DOCKER_ECR_IMAGE_TAG: tomcat9-jdk11
   before_script:
