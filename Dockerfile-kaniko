@@ -1,0 +1,5 @@
+FROM alpine:latest
+# the following line grabs /kaniko/executor from remote image
+COPY --from=gcr.io/kaniko-project/executor:debug /kaniko/executor /kaniko/executor
+
+RUN apk add --no-cache ca-certificates bash git openssh curl gettext bind-tools aws-cli openssl jq
