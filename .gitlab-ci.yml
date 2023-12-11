@@ -90,7 +90,7 @@ copy-alpine-latest:
     - !reference [.template-copy-docker-hub-to-ecr, script]
   only:
     - main
-    -
+
 copy-alpine-3.16.2:
   stage: package
   when: manual
