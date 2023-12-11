@@ -9,6 +9,15 @@ variables:
 stages:
   - package
 
+.template-prepare-ecr:
+  script:
+    # AWS ECR Login
+    - export IS_REPO=`aws ecr describe-repositories --region ${AWS_REGION} --query "repositories[].repositoryName" | grep ${DOCKER_ECR_IMAGE_REPO} | wc -l`
+    - >
+      if [ "$IS_REPO" == "0" ]; then
+        aws ecr create-repository --repository-name ${DOCKER_ECR_IMAGE_REPO} --region ${AWS_REGION} --image-scanning-configuration scanOnPush=true
+      fi
+
 .template-docker-build:
   script:    
     ### Check Latest Image
@@ -17,20 +26,32 @@ stages:
     - >
      if [ "$IS_LATEST" == "1" ]; then
        echo "Image Backup";
-       docker pull ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest;
-       docker tag ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-backup;
-       docker push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-backup;
+       nerdctl pull ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest;
+       nerdctl tag ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-backup;
+       nerdctl push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-backup;
      fi
 
     ### Docker Build & Push
     - docker build . -t ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG} -f ${DOCKER_FILE_NAME} ${DOCKER_BUILD_ARGS}
-    - docker push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
+    - nerdctl push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
     
-    - docker tag ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG} ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest
-    - docker push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest
+    - nerdctl tag ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG} ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest
+    - nerdctl push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest
 
 .template-kaniko-build:
   script:
+
+    ### Check Latest Image
+    - export IS_LATEST=`aws ecr describe-images --region ${AWS_REGION} --repository-name ${DOCKER_ECR_IMAGE_REPO} --query imageDetails[].imageTags | grep ${DOCKER_ECR_IMAGE_TAG}-latest | wc -l`
+    ### Docker Backup
+    - >
+      if [ "$IS_LATEST" == "1" ]; then
+        echo "Image Backup";
+        nerdctl pull ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest;
+        nerdctl tag ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-latest ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-backup;
+        nerdctl push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}-backup;
+      fi
+
     ### Kaniko Build
     - mkdir -p /kaniko/.docker
     - echo "{"credsStore":"ecr-login","credHelpers":{"$REGISTRY_URL":"ecr-login"}}" > /kaniko/.docker/config.json
@@ -47,15 +68,30 @@ stages:
   script:
     ### Docker Build & Push
     ## - docker build . -t ${_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} --build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg APPLICATION_NAME=${APPLICATION_NAME}
-    - docker pull ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
-    - docker tag ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG} ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
+    - nerdctl pull ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
+    - nerdctl tag ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG} ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
 
-    - docker push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
+    - nerdctl push ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
 
-    - docker rmi -f ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
-    - docker rmi -f ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
+    - nerdctl rmi -f ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
+    - nerdctl rmi -f ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
 
-copy-alpine3.16.2:
+copy-alpine-latest:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: alpine
+    DOCKER_BASE_IMAGE_TAG: latest
+    DOCKER_ECR_IMAGE_REPO: common/dockerhub
+    DOCKER_ECR_IMAGE_TAG: latest
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - main
+    -
+copy-alpine-3.16.2:
   stage: package
   when: manual
   variables:
@@ -137,11 +173,11 @@ kaniko-docker-build:
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-kaniko
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=kaniko-debug
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=kaniko
     DOCKER_ECR_IMAGE_REPO: common/build
-    DOCKER_ECR_IMAGE_TAG: kaniko-debug
-#  before_script:
-#    - !reference [.template-prepare-ecr, script]
+    DOCKER_ECR_IMAGE_TAG: kaniko
+  before_script:
+    - !reference [.template-prepare-ecr, script]
   script:
     - !reference [.template-kaniko-build, script]
   only:

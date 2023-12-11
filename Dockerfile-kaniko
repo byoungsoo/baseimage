@@ -1,5 +1,7 @@
-FROM alpine:latest
+ARG BASE_IMAGE_NAME
+ARG BASE_IMAGE_TAG
+FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 # the following line grabs /kaniko/executor from remote image
 COPY --from=gcr.io/kaniko-project/executor:debug /kaniko/executor /kaniko/executor
 
-RUN apk add --no-cache ca-certificates bash git openssh curl gettext bind-tools aws-cli openssl jq
+RUN apk add --no-cache ca-certificates bash curl bind-tools aws-cli jq containerd-ctr nerdctl
