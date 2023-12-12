@@ -67,7 +67,7 @@ stages:
 .template-copy-docker-hub-to-ecr:
   script:
     ### Docker Build & Push
-    - sleep 10000
+#    - sleep 10000
     ## - docker build . -t ${_IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} --build-arg ENVIRONMENT=${ENVIRONMENT} --build-arg APPLICATION_NAME=${APPLICATION_NAME}
     - nerdctl pull ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
     - nerdctl tag ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG} ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
