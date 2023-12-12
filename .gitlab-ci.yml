@@ -46,6 +46,8 @@ stages:
 
     ### Check Latest Image
     - export IS_LATEST=`aws ecr describe-images --region ${AWS_REGION} --repository-name ${DOCKER_ECR_IMAGE_REPO} --query imageDetails[].imageTags | grep ${DOCKER_ECR_IMAGE_TAG}-latest | wc -l`
+    - echo $IS_LATEST
+
     ### Docker Backup
     - >
       if [ "$IS_LATEST" == "1" ]; then
