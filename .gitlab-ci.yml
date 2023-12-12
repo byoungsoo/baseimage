@@ -137,21 +137,6 @@ copy-gradle-7.5.1-jdk11:
   only:
     - main
 
-docker-docker-build:
-  stage: package
-  when: manual
-  variables:
-    DOCKER_FILE_NAME: Dockerfile-docker
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/build --build-arg BASE_IMAGE_TAG=docker-latest
-    DOCKER_ECR_IMAGE_REPO: common/build
-    DOCKER_ECR_IMAGE_TAG: docker
-  before_script:
-    - !reference [.template-prepare-ecr, script]
-  script:
-    - !reference [.template-docker-build, script]
-  only:
-    - main
-
 helm-docker-build:
   stage: package
   when: manual
@@ -163,7 +148,7 @@ helm-docker-build:
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
-    - !reference [.template-docker-build, script]
+    - !reference [.template-kaniko-build, script]
   only:
     - main
 
