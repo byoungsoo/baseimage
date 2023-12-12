@@ -87,7 +87,7 @@ copy-alpine-latest:
     DOCKER_BASE_IMAGE_NAME: alpine
     DOCKER_BASE_IMAGE_TAG: latest
     DOCKER_ECR_IMAGE_REPO: common/dockerhub
-    DOCKER_ECR_IMAGE_TAG: latest
+    DOCKER_ECR_IMAGE_TAG: alpine-latest
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
@@ -105,7 +105,7 @@ copy-alpine-3.16.2:
     DOCKER_BASE_IMAGE_NAME: alpine
     DOCKER_BASE_IMAGE_TAG: 3.16.2
     DOCKER_ECR_IMAGE_REPO: common/dockerhub
-    DOCKER_ECR_IMAGE_TAG: alpine3.16.2
+    DOCKER_ECR_IMAGE_TAG: alpine-3.16.2
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
@@ -121,7 +121,7 @@ copy-tomcat9-jdk11:
   when: manual
   variables:
     DOCKER_BASE_IMAGE_NAME: tomcat
-    DOCKER_BASE_IMAGE_TAG: 9.0.76-jdk11-corretto-al2
+    DOCKER_BASE_IMAGE_TAG: 9.0.83-jdk11-corretto-al2
     DOCKER_ECR_IMAGE_REPO: common/dockerhub
     DOCKER_ECR_IMAGE_TAG: tomcat9-jdk11
   before_script:
@@ -140,9 +140,9 @@ copy-gradle-7.5.1-jdk11:
   when: manual
   variables:
     DOCKER_BASE_IMAGE_NAME: gradle
-    DOCKER_BASE_IMAGE_TAG: 7.5.1-jdk11-alpine
+    DOCKER_BASE_IMAGE_TAG: 8.5.0-jdk11-alpine
     DOCKER_ECR_IMAGE_REPO: common/dockerhub
-    DOCKER_ECR_IMAGE_TAG: gradle-7.5.1-jdk11
+    DOCKER_ECR_IMAGE_TAG: gradle-jdk11
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
