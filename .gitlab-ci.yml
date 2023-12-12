@@ -71,7 +71,7 @@ stages:
   script:
     # AWS ECR Login
     - aws ecr get-login-password --region ${AWS_REGION} | nerdctl login --username AWS --password-stdin ${ECR_BASE_URL}
-    -
+
     - nerdctl pull ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
     - nerdctl tag ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG} ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
 
@@ -79,6 +79,7 @@ stages:
 
     - nerdctl rmi -f ${DOCKER_BASE_IMAGE_NAME}:${DOCKER_BASE_IMAGE_TAG}
     - nerdctl rmi -f ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
+
 
 copy-alpine-latest:
   stage: package
