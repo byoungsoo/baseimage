@@ -77,6 +77,9 @@ stages:
     - nerdctl rmi -f ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
 
 copy-alpine-latest:
+  image:
+    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
+    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
@@ -92,6 +95,9 @@ copy-alpine-latest:
     - main
 
 copy-alpine-3.16.2:
+  image:
+    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
+    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
@@ -107,6 +113,9 @@ copy-alpine-3.16.2:
     - main
 
 copy-tomcat9-jdk11:
+  image:
+    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
+    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
@@ -123,6 +132,9 @@ copy-tomcat9-jdk11:
 
 
 copy-gradle-7.5.1-jdk11:
+  image:
+    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
+    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
@@ -138,6 +150,9 @@ copy-gradle-7.5.1-jdk11:
     - main
 
 docker-docker-build:
+  image:
+    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
+    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
@@ -153,6 +168,9 @@ docker-docker-build:
     - main
 
 helm-docker-build:
+  image:
+    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
+    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
