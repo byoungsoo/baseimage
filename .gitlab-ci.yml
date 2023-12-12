@@ -78,9 +78,6 @@ stages:
     - nerdctl rmi -f ${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${DOCKER_ECR_IMAGE_TAG}
 
 copy-alpine-latest:
-  image:
-    name: ${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/common/build:kaniko-debug
-    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
@@ -95,28 +92,22 @@ copy-alpine-latest:
   only:
     - main
 
-copy-alpine-3.16.2:
-  image:
-    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
-    entrypoint: [ "" ]
-  stage: package
-  when: manual
-  variables:
-    DOCKER_BASE_IMAGE_NAME: alpine
-    DOCKER_BASE_IMAGE_TAG: 3.16.2
-    DOCKER_ECR_IMAGE_REPO: common/dockerhub
-    DOCKER_ECR_IMAGE_TAG: alpine-3.16.2
-  before_script:
-    - !reference [.template-prepare-ecr, script]
-  script:
-    - !reference [.template-copy-docker-hub-to-ecr, script]
-  only:
-    - main
+#copy-alpine-3.16.2:
+#  stage: package
+#  when: manual
+#  variables:
+#    DOCKER_BASE_IMAGE_NAME: alpine
+#    DOCKER_BASE_IMAGE_TAG: 3.16.2
+#    DOCKER_ECR_IMAGE_REPO: common/dockerhub
+#    DOCKER_ECR_IMAGE_TAG: alpine-3.16.2
+#  before_script:
+#    - !reference [.template-prepare-ecr, script]
+#  script:
+#    - !reference [.template-copy-docker-hub-to-ecr, script]
+#  only:
+#    - main
 
 copy-tomcat9-jdk11:
-  image:
-    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
-    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
@@ -131,11 +122,7 @@ copy-tomcat9-jdk11:
   only:
     - main
 
-
 copy-gradle-7.5.1-jdk11:
-  image:
-    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
-    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
@@ -151,9 +138,6 @@ copy-gradle-7.5.1-jdk11:
     - main
 
 docker-docker-build:
-  image:
-    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
-    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
@@ -169,14 +153,11 @@ docker-docker-build:
     - main
 
 helm-docker-build:
-  image:
-    name: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
-    entrypoint: [ "" ]
   stage: package
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-helm
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=alpine3.16.2
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=alpine-latest
     DOCKER_ECR_IMAGE_REPO: common/build
     DOCKER_ECR_IMAGE_TAG: helm
   before_script:
@@ -192,9 +173,9 @@ kaniko-docker-build:
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-kaniko
-    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=kaniko
+    DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=alpine-latest
     DOCKER_ECR_IMAGE_REPO: common/build
-    DOCKER_ECR_IMAGE_TAG: kaniko
+    DOCKER_ECR_IMAGE_TAG: kaniko-debug
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
