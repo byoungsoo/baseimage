@@ -67,8 +67,6 @@ stages:
       --dockerfile "${CI_PROJECT_DIR}/${DOCKER_FILE_NAME}"
       --destination "${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${BASE_IMAGE_TAG}"
 
-
-
 .template-copy-docker-hub-to-ecr:
   script:
     # AWS ECR Login
