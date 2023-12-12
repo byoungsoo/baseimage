@@ -148,6 +148,7 @@ helm-docker-build:
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-helm
+    # Not working when using kaniko. It needs to reveal the reason.
     DOCKER_BUILD_ARGS: --build-arg BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=alpine-latest
     DOCKER_ECR_IMAGE_REPO: common/build
     DOCKER_ECR_IMAGE_TAG: helm
