@@ -1,0 +1,9 @@
+ARG BASE_IMAGE_NAME
+ARG BASE_IMAGE_TAG
+FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+
+# FROM 202949997891.dkr.ecr.ap-northeast-2.amazonaws.com/common/dockerhub:alpine-latest
+# the following line grabs /kaniko/executor from remote image
+COPY --from=gcr.io/kaniko-project/executor:debug /kaniko/executor /kaniko/executor
+
+RUN apk add --no-cache bash curl bind-tools aws-cli jq containerd-ctr nerdctl
