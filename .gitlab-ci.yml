@@ -189,7 +189,7 @@ kaniko-docker-build:
     - main
 
 
-kaniko-docker-build:
+packageupdate-docker-build:
   stage: package
   when: manual
   variables:
