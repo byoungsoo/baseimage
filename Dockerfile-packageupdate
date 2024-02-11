@@ -4,7 +4,7 @@ FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 
 COPY --from=gcr.io/kaniko-project/executor:debug /kaniko/executor /kaniko/executor
 
-RUN cat <<EOF > package_update.sh
+RUN cat <<"EOF" > package_update.sh
 aws ssm send-command --document-name "AWS-RunShellScript" --document-version "1" --targets '[{"Key":"tag:ssm:package-update","Values":["yes"]}]' --parameters '{"workingDirectory":[""],"executionTimeout":["1800"],"commands":["yum -y update",""]}' --comment "Package auto update for PVRE" --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --service-role-arn "arn:aws:iam::558846430793:role/AmazonSNSFullAccessRole" --notification-config '{"NotificationArn":"SSMRunCommandPVRESNSTopic","NotificationEvents":["All"],"NotificationType":"Command"}' --cloud-watch-output-config '{"CloudWatchOutputEnabled":true}' --region ap-northeast-2
 EOF && chmod +x package_update.sh
 
