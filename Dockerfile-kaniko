@@ -7,10 +7,4 @@ FROM 202949997891.dkr.ecr.ap-northeast-2.amazonaws.com/common/dockerhub:alpine-l
 COPY --from=gcr.io/kaniko-project/executor:debug /kaniko/executor /kaniko/executor
 
 RUN apk update && \
-  apk add --no-cache \
-  bash curl bind-tools aws-cli jq containerd-ctr nerdctl && \
-  rm -rf /var/cache/apk/* && \
-    rm -f /usr/lib/libssl.so.3 && \
-    rm -f /usr/lib/libcrypto.so.3 && \
-    ln /lib/libssl.so.3 /usr/lib/libssl.so.3  && \
-    ln /lib/libcrypto.so.3 /usr/lib/libcrypto.so.3
+  apk add --no-cache bash curl bind-tools aws-cli jq containerd-ctr nerdctl
