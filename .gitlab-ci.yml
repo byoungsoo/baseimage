@@ -152,8 +152,8 @@ helm-docker-build:
     BASE_IMAGE_TAG: alpine-latest
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: helm
-  before_script:
-    - !reference [.template-prepare-ecr, script]
+  # before_script:
+  #   - !reference [.template-prepare-ecr, script]
   script:
     - !reference [.template-kaniko-build, script]
   only:
@@ -168,8 +168,8 @@ kaniko-docker-build:
     BASE_IMAGE_TAG: alpine-latest
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: kaniko-debug
-  before_script:
-    - !reference [.template-prepare-ecr, script]
+  # before_script:
+  #   - !reference [.template-prepare-ecr, script]
   script:
     - !reference [.template-kaniko-build, script]
   only:
@@ -184,8 +184,8 @@ packageupdate-docker-build:
     BASE_IMAGE_TAG: alpine-latest
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: pvre-package-update
-  before_script:
-    - !reference [.template-prepare-ecr, script]
+  # before_script:
+  #   - !reference [.template-prepare-ecr, script]
   script:
     - !reference [.template-kaniko-build, script]
   only:
