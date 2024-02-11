@@ -11,5 +11,4 @@ EOF
 RUN ls -al
 RUN pwd
 
-
-RUN apk add --no-cache bash curl bind-tools aws-cli jq containerd-ctr nerdctl
+RUN yum install -y bash curl bind-tools aws-cli jq containerd-ctr nerdctl
