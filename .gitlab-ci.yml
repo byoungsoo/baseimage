@@ -63,7 +63,8 @@ stages:
       --ignore-path=/var/mail
       --ignore-path=/var/spool/mail
       --context "${CI_PROJECT_DIR}"
-      --build-arg "${DOCKER_BUILD_ARGS}"
+      --build-arg "${BASE_IMAGE_NAME}"
+      --build-arg "${BASE_IMAGE_TAG}"
       --dockerfile "${CI_PROJECT_DIR}/${DOCKER_FILE_NAME}"
       --destination "${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${BASE_IMAGE_TAG}"
 
@@ -162,7 +163,8 @@ helm-docker-build:
   variables:
     DOCKER_FILE_NAME: Dockerfile-helm
     # Not working when using kaniko. It needs to reveal the reason.
-    DOCKER_BUILD_ARGS: BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=alpine-latest
+    BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub
+    BASE_IMAGE_TAG: alpine-latest
     DOCKER_ECR_IMAGE_REPO: common/build
     DOCKER_ECR_IMAGE_TAG: helm
   before_script:
@@ -178,7 +180,8 @@ kaniko-docker-build:
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-kaniko
-    DOCKER_BUILD_ARGS: BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=alpine-latest
+    BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub 
+    BASE_IMAGE_TAG: alpine-latest
     DOCKER_ECR_IMAGE_REPO: common/build
     DOCKER_ECR_IMAGE_TAG: kaniko-debug
   before_script:
@@ -194,7 +197,8 @@ packageupdate-docker-build:
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-packageupdate
-    DOCKER_BUILD_ARGS: BASE_IMAGE_NAME=${ECR_BASE_URL}/common/dockerhub --build-arg BASE_IMAGE_TAG=amazonlinux-latest
+    BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub 
+    BASE_IMAGE_TAG: amazonlinux-latest
     DOCKER_ECR_IMAGE_REPO: common/build
     DOCKER_ECR_IMAGE_TAG: pvre-package-update
   before_script:
