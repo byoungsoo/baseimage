@@ -179,7 +179,6 @@ kaniko-docker-build:
 
 packageupdate-docker-build:
   stage: package
-  when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-packageupdate
     BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub 
