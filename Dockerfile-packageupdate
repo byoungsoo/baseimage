@@ -1,6 +1,8 @@
-ARG BASE_IMAGE_NAME
-ARG BASE_IMAGE_TAG
-FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
+# ARG BASE_IMAGE_NAME
+# ARG BASE_IMAGE_TAG
+# FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} 
+
+FROM alpine:latest
 
 # RUN apt-get update && apt-get install net-tools jq nerdctl bash bind9-utils
 RUN apk update && apk add --no-cache bash bind-tools aws-cli jq nerdctl
