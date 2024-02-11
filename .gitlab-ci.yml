@@ -59,17 +59,14 @@ stages:
     - mkdir -p /kaniko/.docker
     - echo "{"credsStore":"ecr-login","credHelpers":{"$REGISTRY_URL":"ecr-login"}}" > /kaniko/.docker/config.json
 
-    - echo "${BASE_IMAGE_NAME}"
-    - echo "${BASE_IMAGE_TAG}"
-
     - /kaniko/executor
       --ignore-path=/var/mail
       --ignore-path=/var/spool/mail
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/${DOCKER_FILE_NAME}"
       --destination "${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${BASE_IMAGE_TAG}"
-      --build-arg "${BASE_IMAGE_NAME}"
-      --build-arg "${BASE_IMAGE_TAG}"
+      --build-arg BASE_IMAGE_NAME=$BASE_IMAGE_NAME
+      --build-arg BASE_IMAGE_TAG=$BASE_IMAGE_TAG
       
 .template-copy-docker-hub-to-ecr:
   script:

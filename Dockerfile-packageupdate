@@ -13,4 +13,4 @@ EOF
 RUN ls -al
 RUN pwd
 
-RUN yum install -y bash curl bind-tools aws-cli jq nerdctl
+RUN yum install -y bash curl bind-utils aws-cli jq nerdctl
