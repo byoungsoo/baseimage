@@ -63,10 +63,10 @@ stages:
       --ignore-path=/var/mail
       --ignore-path=/var/spool/mail
       --context "${CI_PROJECT_DIR}"
+      --build-arg BASE_IMAGE_NAME="$BASE_IMAGE_NAME"
+      --build-arg BASE_IMAGE_TAG="$BASE_IMAGE_TAG"
       --dockerfile "${CI_PROJECT_DIR}/${DOCKER_FILE_NAME}"
       --destination "${ECR_BASE_URL}/${DOCKER_ECR_IMAGE_REPO}:${BASE_IMAGE_TAG}"
-      --build-arg BASE_IMAGE_NAME=$BASE_IMAGE_NAME
-      --build-arg BASE_IMAGE_TAG=$BASE_IMAGE_TAG
       
 .template-copy-docker-hub-to-ecr:
   script:
