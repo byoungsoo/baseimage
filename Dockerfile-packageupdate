@@ -3,7 +3,7 @@ ARG BASE_IMAGE_TAG
 FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 
 # RUN apt-get update && apt-get install net-tools jq nerdctl bash bind9-utils
-RUN apk add --no-cache bash bind-tools aws-cli jq nerdctl
+RUN apk update && apk add --no-cache bash bind-tools aws-cli jq nerdctl
 
 # RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && awscliv2.zip && ./aws/install
 
