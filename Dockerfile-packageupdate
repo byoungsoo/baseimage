@@ -1,13 +1,8 @@
-# ARG BASE_IMAGE_NAME
-# ARG BASE_IMAGE_TAG
-# FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} 
+ARG BASE_IMAGE_NAME
+ARG BASE_IMAGE_TAG
+FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} 
 
-FROM alpine:3.18.6
-
-# RUN apt-get update && apt-get install net-tools jq nerdctl bash bind9-utils
 RUN apk update && apk add --no-cache bash bind-tools aws-cli jq nerdctl
-
-# RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && awscliv2.zip && ./aws/install
 
 RUN echo "aws ssm send-command --document-name "AWS-RunShellScript" --document-version "1" --targets '[{"Key":"tag:ssm:package-update","Values":["yes"]}]' --parameters '{"workingDirectory":[""],"executionTimeout":["1800"],"commands":["yum -y update",""]}' --comment "Package auto update for PVRE" --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --service-role-arn "arn:aws:iam::558846430793:role/AmazonSNSFullAccessRole" --notification-config '{"NotificationArn":"SSMRunCommandPVRESNSTopic","NotificationEvents":["All"],"NotificationType":"Command"}' --cloud-watch-output-config '{"CloudWatchOutputEnabled":true}' --region ap-northeast-2" >> package_update.sh
 
