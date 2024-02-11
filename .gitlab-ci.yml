@@ -59,6 +59,9 @@ stages:
     - mkdir -p /kaniko/.docker
     - echo "{"credsStore":"ecr-login","credHelpers":{"$REGISTRY_URL":"ecr-login"}}" > /kaniko/.docker/config.json
 
+    - echo "${BASE_IMAGE_NAME}"
+    - echo "${BASE_IMAGE_TAG}"
+
     - /kaniko/executor
       --ignore-path=/var/mail
       --ignore-path=/var/spool/mail
