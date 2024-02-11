@@ -8,4 +8,4 @@ RUN chmod +x package_update.sh
 
 RUN yum update && yum install -y bind-utils aws-cli jq nerdctl
 
-ENTRYPOINT ["./package_update.sh"]
+CMD ["./package_update.sh"]
