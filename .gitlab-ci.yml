@@ -183,7 +183,7 @@ packageupdate-docker-build:
   variables:
     DOCKER_FILE_NAME: Dockerfile-packageupdate
     BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub 
-    BASE_IMAGE_TAG: amazonlinux-latest
+    BASE_IMAGE_TAG: alpine-latest
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: pvre-package-update
   before_script:
