@@ -194,6 +194,7 @@ kaniko-docker-build:
 
 packageupdate-docker-build:
   stage: package
+  image: ${ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-debug
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-packageupdate
