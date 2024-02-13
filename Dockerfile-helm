@@ -6,6 +6,4 @@ CMD ["/bin/sh"]
 ARG KUBE_VERSION=1.28.0
 ARG HELM_VERSION=3.13.2
 
-RUN RUN apt-get update && apk add --no-cache bash git curl bind-tools py3-pip jq openssl && wget -q https://storage.googleapis.com/kubernetes-release/release/v${KUBE_VERSION}/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl && curl -L https://git.io/get_helm.sh | bash -s -- --version v${HELM_VERSION} && chmod +x /usr/local/bin/helm && chmod g+rwx /root && mkdir /config && chmod g+rwx /config && helm repo add "stable" "https://charts.helm.sh/stable" --force-update
-
-RUN pip3 install awscli
+RUN RUN apt-get update && apk add --no-cache bash git curl bind-tools aws-cli jq openssl && wget -q https://storage.googleapis.com/kubernetes-release/release/v${KUBE_VERSION}/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl && curl -L https://git.io/get_helm.sh | bash -s -- --version v${HELM_VERSION} && chmod +x /usr/local/bin/helm && chmod g+rwx /root && mkdir /config && chmod g+rwx /config && helm repo add "stable" "https://charts.helm.sh/stable" --force-update
