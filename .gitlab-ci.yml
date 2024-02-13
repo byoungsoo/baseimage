@@ -87,7 +87,7 @@ copy-alpine-latest:
   when: manual
   variables:
     DOCKER_BASE_IMAGE_NAME: alpine
-    DOCKER_BASE_IMAGE_TAG: 3.17
+    DOCKER_BASE_IMAGE_TAG: "3.17"
     DEST_ECR_IMAGE_REPO: common/dockerhub
     DEST_ECR_IMAGE_TAG: alpine-latest
   before_script:
