@@ -147,13 +147,12 @@ helm-docker-build:
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-helm
-    # Not working when using kaniko. It needs to reveal the reason.
     BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub
     BASE_IMAGE_TAG: alpine-latest
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: helm
-  # before_script:
-  #   - !reference [.template-prepare-ecr, script]
+  before_script:
+    - !reference [.template-prepare-ecr, script]
   script:
     - !reference [.template-kaniko-build, script]
   only:
@@ -168,8 +167,8 @@ kaniko-docker-build:
     BASE_IMAGE_TAG: alpine-latest
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: kaniko-debug
-  # before_script:
-  #   - !reference [.template-prepare-ecr, script]
+  before_script:
+    - !reference [.template-prepare-ecr, script]
   script:
     - !reference [.template-kaniko-build, script]
   only:
@@ -184,24 +183,8 @@ packageupdate-docker-build:
     BASE_IMAGE_TAG: alpine-latest
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: pvre-package-update
-  # before_script:
-  #   - !reference [.template-prepare-ecr, script]
-  script:
-    - !reference [.template-kaniko-build, script]
-  only:
-    - main
-
-test-docker-build:
-  stage: package
-  when: manual
-  variables:
-    DOCKER_FILE_NAME: Dockerfile-test
-    BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub 
-    BASE_IMAGE_TAG: alpine-latest
-    DEST_ECR_IMAGE_REPO: common/build
-    DEST_ECR_IMAGE_TAG: test
-  # before_script:
-  #   - !reference [.template-prepare-ecr, script]
+  before_script:
+    - !reference [.template-prepare-ecr, script]
   script:
     - !reference [.template-kaniko-build, script]
   only:
