@@ -193,7 +193,6 @@ packageupdate-docker-build:
 
 test-docker-build:
   stage: package
-  when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-test
     BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub 
