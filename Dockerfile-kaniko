@@ -6,4 +6,5 @@ FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 # the following line grabs /kaniko/executor from remote image
 COPY --from=gcr.io/kaniko-project/executor:debug /kaniko/executor /kaniko/executor
 
-RUN apk update && apk add --no-cache bash curl bind-tools aws-cli jq nerdctl containerd-ctr
+RUN apk update && apk add --no-cache py3-pip bash curl bind-tools jq nerdctl containerd-ctr 
+RUN pip3 install awscli
