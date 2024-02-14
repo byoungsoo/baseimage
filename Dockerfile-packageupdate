@@ -2,7 +2,7 @@ ARG BASE_IMAGE_NAME
 ARG BASE_IMAGE_TAG
 FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG} 
 
-RUN apk update && apk add --no-cache aws-cli bash bind-tools jq nerdctl
+RUN apk update && apk add --no-cache py3-pip aws-cli bash bind-tools jq nerdctl
 
 COPY ./script/package_update.sh package_update.sh 
 
