@@ -82,6 +82,22 @@ stages:
     - nerdctl rmi -f ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}
 
 
+copy-python3.12-alpine-latest:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_BASE_IMAGE_NAME: python
+    DOCKER_BASE_IMAGE_TAG: 3.12-alpine
+    DEST_ECR_IMAGE_REPO: common/dockerhub
+    DEST_ECR_IMAGE_TAG: python-3.12-alpine-latest
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-copy-docker-hub-to-ecr, script]
+  only:
+    - main
+
+
 copy-alpine-latest:
   stage: package
   when: manual
