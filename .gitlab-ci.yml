@@ -13,6 +13,8 @@ stages:
   script:
     # AWS ECR Login
     - export IS_REPO=`aws ecr describe-repositories --region ${AWS_REGION} --query "repositories[].repositoryName" | grep ${DEST_ECR_IMAGE_REPO} | wc -l`
+    - echo "IS_REPO: $IS_REPO"
+    
     - >
       if [ "$IS_REPO" == "0" ]; then
         aws ecr create-repository --repository-name ${DEST_ECR_IMAGE_REPO} --region ${AWS_REGION} --image-scanning-configuration scanOnPush=true
