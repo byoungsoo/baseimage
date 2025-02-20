@@ -5,5 +5,5 @@ FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 CMD ["/bin/sh"]
 ARG HELM_VERSION=3.17.1
 
-RUN apk update && apk add --no-cache bash git curl bind-tools py3-pip aws-cli jq openssl 
+RUN apk update && apk add --no-cache bash git curl bind-tools py3-pip aws-cli jq openssl kubectl
 # &&  curl -L "https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl && chmod +x /usr/local/bin/kubectl
