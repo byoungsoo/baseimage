@@ -179,6 +179,7 @@ helm-docker-build:
 kaniko-docker-build:
   stage: package
   when: manual
+  image: bitnami/kaniko:latest
   variables:
     DOCKER_FILE_NAME: Dockerfile-kaniko
     BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub 
