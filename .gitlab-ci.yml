@@ -165,8 +165,8 @@ helm-docker-build:
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-helm
-    BASE_IMAGE_NAME: ${ECR_BASE_URL}/common/dockerhub
-    BASE_IMAGE_TAG: alpine-latest
+    BASE_IMAGE_NAME: alpine/helm
+    BASE_IMAGE_TAG: latest
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: helm
   before_script:
