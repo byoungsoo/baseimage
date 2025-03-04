@@ -3,7 +3,7 @@ ARG BASE_IMAGE_TAG
 FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
 
 USER root
-RUN apt update && apt install -y \
+RUN apt update -y && apt install -y \
     telnet curl wget dnsutils git jq unzip podman \
     && rm -rf /var/lib/apt/lists/*
 
