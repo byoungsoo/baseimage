@@ -212,7 +212,7 @@ packageupdate-docker-build:
 
 jupyterlab-docker-build:
   stage: package
-  # when: manual
+  when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-jupyterlab
     BASE_IMAGE_NAME: quay.io/jupyter/base-notebook
