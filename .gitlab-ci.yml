@@ -145,14 +145,14 @@ copy-tomcat9-jdk11:
   only:
     - main
 
-copy-gradle-8.5.0-jdk11:
+copy-gradle-8.13-jdk17-alpine:
   stage: package
   when: manual
   variables:
     DOCKER_BASE_IMAGE_NAME: gradle
-    DOCKER_BASE_IMAGE_TAG: 8.5.0-jdk11-alpine
+    DOCKER_BASE_IMAGE_TAG: 8.13-jdk17-alpine
     DEST_ECR_IMAGE_REPO: common/dockerhub
-    DEST_ECR_IMAGE_TAG: gradle-jdk11
+    DEST_ECR_IMAGE_TAG: gradle8-jdk17-alpine
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
