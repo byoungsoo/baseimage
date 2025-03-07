@@ -130,14 +130,14 @@ copy-ubuntu-latest:
   only:
     - main
 
-copy-tomcat9-jdk11:
+copy-tomcat9-jdk17:
   stage: package
   when: manual
   variables:
     DOCKER_BASE_IMAGE_NAME: tomcat
-    DOCKER_BASE_IMAGE_TAG: 9.0.83-jdk11-corretto-al2
+    DOCKER_BASE_IMAGE_TAG: 9.0.102-jdk17-corretto-al2
     DEST_ECR_IMAGE_REPO: common/dockerhub
-    DEST_ECR_IMAGE_TAG: tomcat9-jdk11
+    DEST_ECR_IMAGE_TAG: tomcat9-jdk17
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
