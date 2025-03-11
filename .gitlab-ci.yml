@@ -215,7 +215,7 @@ jupyterlab-docker-build:
   when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-jupyterlab
-    BASE_IMAGE_NAME: quay.io/jupyter/base-notebook
+    BASE_IMAGE_NAME: elyra/elyra
     BASE_IMAGE_TAG: latest
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: jupyter-notebook
