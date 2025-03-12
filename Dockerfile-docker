@@ -1,7 +1,0 @@
-ARG BASE_IMAGE_NAME
-ARG BASE_IMAGE_TAG
-FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-
-RUN apk update && apk add --no-cache jq
-# RUN apk update && apk add --no-cache aws-cli 
-#&& apk add --no-cache jq

@@ -1,7 +1,5 @@
-ARG BASE_IMAGE_NAME
-ARG BASE_IMAGE_TAG
-FROM ${BASE_IMAGE_NAME}:${BASE_IMAGE_TAG}
-
+FROM quay.io/jupyter/base-notebook:latest
+    
 USER root
 RUN apt update -y && apt install -y \
     telnet curl wget dnsutils git jq unzip \
@@ -10,5 +8,5 @@ RUN apt update -y && apt install -y \
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
 
 USER jovyan
-
-
+WORKDIR /home/jovyan
+RUN pip3 install --upgrade "elyra[all]"
