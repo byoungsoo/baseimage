@@ -9,4 +9,4 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
 
 USER jovyan
 WORKDIR /home/jovyan
-RUN pip3 install --upgrade "elyra[all]"
+RUN pip install --no-cache-dir --upgrade pip && pip3 install --no-cache-dir --upgrade "elyra[all]"
