@@ -206,11 +206,10 @@ jupyterlab-docker-build:
 kaniko-docker-build:
   stage: package
   when: manual
-  image: gcr.io/kaniko-project/executor:debug
   variables:
     DOCKER_FILE_NAME: Dockerfile-kaniko
     DEST_ECR_IMAGE_REPO: common/build
-    DEST_ECR_IMAGE_TAG: kaniko-debug
+    DEST_ECR_IMAGE_TAG: kaniko
   before_script:
     - !reference [.template-kaniko-prebuild, script]
     - !reference [.template-prepare-ecr, script]
