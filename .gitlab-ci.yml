@@ -204,6 +204,7 @@ jupyterlab-docker-build:
     - main
 
 ## When build '202949997891.dkr.ecr.ap-northeast-2.amazonaws.com/common/build:kaniko-base' image, you must build it in EC2 or other environment on docker.
+
 kaniko-docker-build:
   stage: package
   when: manual
