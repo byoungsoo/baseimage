@@ -2,4 +2,4 @@ FROM alpine:latest
 
 COPY --from=gcr.io/kaniko-project/executor:debug /kaniko/executor /kaniko/executor
 
-RUN apk update && apk add --no-cache py3-pip aws-cli bash curl bind-tools jq nerdctl containerd-ctr py3-jmespath
+RUN apk update && apk add --no-cache py3-pip aws-cli bash curl bind-tools jq nerdctl containerd-ctr py3-jmespath python3
