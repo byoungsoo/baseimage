@@ -205,7 +205,6 @@ jupyterlab-docker-build:
 
 kaniko-docker-build:
   stage: package
-  when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-kaniko
     DEST_ECR_IMAGE_REPO: common/build
