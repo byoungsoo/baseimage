@@ -1,4 +1,4 @@
-FROM python:3.12-alpine
+FROM python:3.11
 
 # COPY --from=gcr.io/kaniko-project/executor:debug /kaniko/executor /kaniko/executor
 
