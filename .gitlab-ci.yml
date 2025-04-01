@@ -223,7 +223,7 @@ python-docker-build:
   variables:
     DOCKER_FILE_NAME: Dockerfile-kaniko
     DEST_ECR_IMAGE_REPO: common/build
-    DEST_ECR_IMAGE_TAG: kaniko
+    DEST_ECR_IMAGE_TAG: python3.11-bookworm
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
