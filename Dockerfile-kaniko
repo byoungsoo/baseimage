@@ -1,4 +1,4 @@
-FROM python:3.11.11-bookworm
+FROM python:3.11-bookworm
 
 # COPY --from=gcr.io/kaniko-project/executor:debug /kaniko/executor /kaniko/executor
 
