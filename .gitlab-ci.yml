@@ -219,7 +219,7 @@ kaniko-docker-build:
 
 python-docker-build:
   stage: package
-  # when: manual
+  when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-kaniko
     DEST_ECR_IMAGE_REPO: common/build
