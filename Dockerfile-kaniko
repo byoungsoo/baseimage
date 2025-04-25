@@ -12,7 +12,7 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
     && rm -rf awscliv2.zip aws \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-COPY /kaniko/requirments.txt .
+COPY /files/kaniko/requirments.txt .
 
 RUN pip install -r requirments.txt
 
