@@ -203,9 +203,23 @@ jupyterlab-docker-build:
   only:
     - main
 
-kaniko-docker-build:
+jupyterlab-spark-docker-build:
   stage: package
   # when: manual
+  variables:
+    DOCKER_FILE_NAME: Dockerfile-jupyterlab_spark
+    DEST_ECR_IMAGE_REPO: common/build
+    DEST_ECR_IMAGE_TAG: jupyter-spark
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-kaniko-build, script]
+  only:
+    - main
+
+kaniko-docker-build:
+  stage: package
+  when: manual
   variables:
     DOCKER_FILE_NAME: Dockerfile-kaniko
     DEST_ECR_IMAGE_REPO: common/build
