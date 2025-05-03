@@ -38,7 +38,7 @@ ENV SPARK_HOME=/usr/local/spark
 ENV PATH="${PATH}:${SPARK_HOME}/bin"
 ENV SPARK_OPTS="--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info"
 
-COPY setup_spark.py /opt/setup-scripts/
+COPY files/jupyter_spark/setup_spark.py /opt/setup-scripts/
 RUN chmod 755 /opt/setup-scripts/setup_spark.py
 # Setup Spark
 RUN /opt/setup-scripts/setup_spark.py \
@@ -48,7 +48,7 @@ RUN /opt/setup-scripts/setup_spark.py \
     --spark-download-url="${spark_download_url}"
 
 # Configure IPython system-wide
-COPY ipython_kernel_config.py "/etc/ipython/"
+COPY files/jupyter_spark/ipython_kernel_config.py "/etc/ipython/"
 RUN fix-permissions "/etc/ipython/"
 
 USER ${NB_UID}
