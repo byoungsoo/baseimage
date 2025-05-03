@@ -206,6 +206,8 @@ jupyterlab-docker-build:
 jupyterlab-spark-docker-build:
   stage: package
   # when: manual
+  tags:
+    - large
   variables:
     DOCKER_FILE_NAME: Dockerfile-jupyterlab_spark
     DEST_ECR_IMAGE_REPO: common/build
