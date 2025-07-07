@@ -205,7 +205,7 @@ jupyterlab-docker-build:
 
 jupyterlab-spark-docker-build:
   stage: package
-  # when: manual
+  when: manual
   tags:
     - large
   variables:
