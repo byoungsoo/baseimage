@@ -19,7 +19,7 @@ stages:
         aws ecr create-repository --repository-name ${DEST_ECR_IMAGE_REPO} --region ${AWS_REGION} --image-scanning-configuration scanOnPush=true
       fi
 
-.template-docker-build:
+.template-podman-build:
   script:    
     ### Check Latest Image
     - export IS_LATEST=`aws ecr describe-images --region ${AWS_REGION} --repository-name ${DEST_ECR_IMAGE_REPO} --query imageDetails[].imageTags | grep ${DEST_ECR_IMAGE_TAG}-latest | wc -l`
@@ -27,17 +27,17 @@ stages:
     - >
      if [ "$IS_LATEST" == "1" ]; then
        echo "Image Backup";
-       nerdctl pull ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-latest;
-       nerdctl tag ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-latest ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-backup;
-       nerdctl push ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-backup;
+       podman pull ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-latest;
+       podman tag ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-latest ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-backup;
+       podman push ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-backup;
      fi
 
     ### Docker Build & Push
-    - docker build . -t ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG} -f ${DOCKER_FILE_NAME} ${DOCKER_BUILD_ARGS}
-    - nerdctl push ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}
+    - podman build . -t ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG} -f ${DOCKER_FILE_NAME} ${DOCKER_BUILD_ARGS}
+    - podman push ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}
     
-    - nerdctl tag ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG} ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-latest
-    - nerdctl push ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-latest
+    - podman tag ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG} ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-latest
+    - podman push ${ECR_BASE_URL}/${DEST_ECR_IMAGE_REPO}:${DEST_ECR_IMAGE_TAG}-latest
 
 .template-kaniko-build:
   script:
@@ -226,6 +226,34 @@ kaniko-docker-build:
     DOCKER_FILE_NAME: Dockerfile-kaniko
     DEST_ECR_IMAGE_REPO: common/build
     DEST_ECR_IMAGE_TAG: kaniko
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-kaniko-build, script]
+  only:
+    - main
+
+kaniko-mlops-docker-build:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_FILE_NAME: Dockerfile-kaniko-mlops
+    DEST_ECR_IMAGE_REPO: common/build
+    DEST_ECR_IMAGE_TAG: kaniko-mlops
+  before_script:
+    - !reference [.template-prepare-ecr, script]
+  script:
+    - !reference [.template-kaniko-build, script]
+  only:
+    - main
+
+podman-docker-build:
+  stage: package
+  when: manual
+  variables:
+    DOCKER_FILE_NAME: Dockerfile-podman
+    DEST_ECR_IMAGE_REPO: common/build
+    DEST_ECR_IMAGE_TAG: podman
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
