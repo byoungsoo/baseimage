@@ -136,7 +136,7 @@ copy-tomcat-jdk17:
     DOCKER_BASE_IMAGE_NAME: tomcat
     DOCKER_BASE_IMAGE_TAG: jdk17
     DEST_ECR_IMAGE_REPO: common/dockerhub
-    DEST_ECR_IMAGE_TAG: jdk17
+    DEST_ECR_IMAGE_TAG: tomcat-jdk17
   before_script:
     - !reference [.template-prepare-ecr, script]
   script:
